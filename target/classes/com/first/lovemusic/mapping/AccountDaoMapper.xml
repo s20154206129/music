@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.first.lovemusic.dao.UserDao">
+	<resultMap type="Account" id="accountResult">
+		<id property="userId" column="userId" />
+		<result property="account" column="account" />
+		<result property="password" column="password" />
+		<result property="accountState" column="accountState" />
+	</resultMap>
+     <!-- 注册  正常状态为 acountState为1  -->
+	 <insert id="saveUser">
+		insert into
+		tb_account(account,password,accountState)
+		values(#{account},#{password},0)
+	 </insert>
+
+	<select id="findUser" resultMap="accountResult">
+		select * from tb_account where
+		account=#{userName} and password=#{userPassword}
+	</select>
+
+
+	<!-- findUserByAcount 用户名是否唯一 -->
+	<select id="findUserByAcount" resultType="Account">
+		select * from tb_account where
+		account=#{account} 
+	</select>
+	
+	<!-- findAccountById -->
+	<select id="findAccountById" resultType="Account">
+		select *  from tb_account where
+		userId=#{userId} 
+	</select>
+	
+	<!--findUserLastId  -->
+   <select id="findUserLastId"  resultType="Integer">
+	  SELECT  userId  FROM  tb_account   order by  userId  DESC  limit 1
+	</select>
+	
+	
+</mapper>

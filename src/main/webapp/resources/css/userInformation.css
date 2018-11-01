@@ -1,0 +1,32 @@
+.default {
+	width: 69px;
+	height: 69px;
+	-webkit-border-radius: 50%;
+	-moz-border-radius: 50%;
+	border-radius: 50%;
+}
+
+.avatar_select label span {
+	display: block;
+	text-align: left;
+	width: 260px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.avatar_select label {
+	float: none;
+}
+
+#avatar_image {
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	height: 20px;
+	line-height: 20px;
+	font-size: 14px;
+	border: none;
+	vertical-align: text-bottom;
+	display: none;
+}

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.first.lovemusic.dao.UserDao">
+     <resultMap type="UserInformation" id="userInformationResult">
+		<id property="userId" column="userId"/>
+		<result property="userName" column="userName"/>
+		<result property="userSex" column="userSex"/>
+		<result property="userBirthday" column="userBirthday" />
+		<result property="userPhone" column="userPhone"/>
+		<result property="userAddress" column="userAddress"  />
+		<result property="userImg" column="userImg"/>
+		<result property="email" column="email"/>
+		<result property="userIntroduce" column="userIntroduce"/>
+	</resultMap>
+    <!-- findUserById -->
+    <select id="findUserById"  resultMap="userInformationResult">
+	  SELECT  *  FROM  tb_userinformation   WHERE   userId=#{userId}
+	</select>
+
+    <!--  updateUserInfo-->
+    <update id="updateUserInfo"   parameterType="UserInformation" >
+    UPDATE  tb_userinformation   SET   userAddress=#{userAddress}
+    ,userBirthday=#{userBirthday}
+    ,userImg=#{userImg}
+    , userName=#{userName}
+    ,userPhone=#{userPhone}
+    ,userSex=#{userSex}  
+    ,userIntroduce=#{userIntroduce}
+    ,email=#{email}
+    where  userId=#{userId}
+    </update>
+   
+   <!-- saveUserIdToUserInfomation -->
+   <insert id="saveUserIdToUserInfomation">
+		insert into
+		tb_userinformation(userId,userName)
+		values(#{userId},#{account})
+	</insert>
+   
+</mapper>

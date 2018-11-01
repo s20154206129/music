@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.first.lovemusic.dao.MyCareSingerDao">
+	<resultMap type="MyCareSinger" id="myCareSingerResult">
+		<id property="id" column="id" />
+		<association property="user" column="userId"
+			select="com.first.lovemusic.dao.UserDao.findAccountById">
+		</association>
+		<!-- 用户关注的歌手 -->
+		<collection property="singerList" ofType="Singer" column="singerId"
+			select="com.first.lovemusic.dao.SingerDao.findSingerById">
+		</collection>
+	</resultMap>
+
+
+	<!-- findMyCareSingersByUserId -->
+	<select id="findMyCareSingersByUserId" resultMap="myCareSingerResult">
+		SELECT * from tb_mycaresinger WHERE userId=#{userId}
+	</select>
+
+	<!-- findSingerByUserIdAndSingerId  查找是否已经关注 -->
+	<select id="findSingerByUserIdAndSingerId" resultMap="myCareSingerResult">
+		SELECT * from tb_mycaresinger WHERE userId=#{userId}   and  singerId=#{singerId}
+	</select>
+
+	<!-- saveSingerToMyCareList -->
+	<insert id="saveSingerToMyCareList">
+		INSERT INTO tb_mycaresinger(userId,singerId) VALUES(#{userId},#{singerId})
+	</insert>
+	
+	<!-- deleteSingerByUserIdAndSingerId -->
+	<delete  id="deleteSingerByUserIdAndSingerId">
+	   DELETE  from  tb_mycaresinger  WHERE   singerId=#{singerId}   and  userId=#{userId}
+	</delete>
+</mapper>

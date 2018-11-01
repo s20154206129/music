@@ -1,0 +1,46 @@
+<%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<div>
+	<nav>
+		<ul class="pagination">
+			<c:if test="${pageBean.currentPage  > 1}">
+				<li><a href="javascript:gotoPage(1)">首页</a></li>
+				<li><a href="javascript:gotoPage(${pageBean.currentPage - 1})"
+					aria-label="Previous"> <span aria-hidden="true">&laquo;
+							上一页</span>
+				</a></li>
+			</c:if>
+			<c:if test="${pageBean.currentPage == 1 }">
+				<li><a href="javascript:gotoPage(1)">首页</a></li>
+				<li class="disabled"><a aria-label="Previous"> <span
+						aria-hidden="true">&laquo; 上一页</span>
+				</a></li>
+			</c:if>
+			<li><a>(第 ${pageBean.currentPage} 页 共 ${pageBean.totalPage}
+					页)</a></li>
+
+			<c:if test="${pageBean.currentPage < pageBean.totalPage   }">
+				<li><a href="javascript:gotoPage(${pageBean.currentPage + 1})"
+					aria-label="Next"> <span aria-hidden="true">下一页 &raquo;</span>
+				</a></li>
+				<li><a href="javascript:gotoPage(${pageBean.totalPage})">末页</a></li>
+			</c:if>
+
+			<c:if
+				test="${pageBean.currentPage == pageBean.totalPage || pageBean.totalPage eq 0  }">
+				<li class="disabled"><a aria-label="Next"> <span
+						aria-hidden="true">下一页 &raquo;</span>
+				</a></li>
+				<li><a>末页</a></li>
+			</c:if>
+		</ul>
+	</nav>
+</div>
+<script type="text/javascript">
+    /* 这是全局刷新  */
+	var total = parseInt("${pageBean.totalPage}");
+	function gotoPage(currentPage) {
+		window.location.href = "course/manage.action?currentPage="
+				+ currentPage;
+	}
+</script>

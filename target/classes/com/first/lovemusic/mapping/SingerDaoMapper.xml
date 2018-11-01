@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.first.lovemusic.dao.SingerDao">
+	<resultMap type="Singer" id="singerBasicResult">
+		<id property="singerId" column="singerId" />
+		<result property="singerName" column="singerName" />
+		<result property="singerIntroduce" column="singerIntroduce" />
+		<result property="singerSex" column="singerSex" />
+		<result property="singerAge" column="singerAge" />
+		<result property="company" column="company" />
+		<result property="registerTime" column="registerTime" />
+		<result property="singerImg" column="singerImg" />
+		<result property="attentionNum" column="attentionNum" />
+	</resultMap>
+
+
+	<!-- 高级映射继承 -->
+	<resultMap type="Singer" id="singerResult" extends="singerBasicResult">
+		<association property="team" javaType="Team" column="teamId"
+			select="com.first.lovemusic.dao.TeamDao.findTeamById">
+		</association>
+	</resultMap>
+
+
+
+	<!-- findSingerById -->
+	<select id="findSingerById" resultMap="singerBasicResult">
+		SELECT * FROM tb_singer WHERE singerId=#{singerId}
+	</select>
+
+	<!-- findSingerByTop5 -->
+	<select id="findSingerByTop5" resultMap="singerBasicResult">
+		SELECT * FROM tb_singer ORDER BY singerId LIMIT 5
+	</select>
+
+
+	<!-- findAllSingers -->
+	<select id="findAllSingers" resultMap="singerBasicResult">
+		SELECT * FROM tb_singer ORDER BY singerId 
+	</select>
+
+
+	<!--getCount -->
+	<select id="getCount" resultType="Integer">
+		SELECT count(*) FROM tb_singer
+	</select>
+ 
+
+	<!-- findPageSingersList -->
+	<select id="findPageSingersList" resultMap="singerBasicResult">
+		SELECT * FROM tb_singer ORDER BY singerId limit #{currentPage},#{pageSize}
+	</select>
+
+	<!--findListBySingerFirst 首字母查找歌手名 -->
+	<select id="findListBySingerFirst" resultMap="singerBasicResult">
+		SELECT * FROM tb_singer WHERE
+		get_first_pinyin_char(singerName) =#{letter} OR singerName LIKE #{letters}
+	</select>
+	
+	
+	<!-- findSingerByName -->
+	<select id="findSingerByName" resultMap="singerBasicResult">
+		SELECT * FROM tb_singer WHERE
+		 singerName=#{singerName}
+	</select>
+	
+	<!-- saveSinger 增加歌手-->
+	<insert id="saveSinger"   parameterType="Singer">
+		  INSERT INTO  tb_singer(singerName)VALUES(#{singerName})
+	</insert>
+	
+	<!-- findSingerByHot5 -->
+	<select id="findSingerByHot5" resultMap="singerBasicResult">
+		SELECT * FROM tb_singer ORDER BY  attentionNum  DESC  LIMIT 5
+	</select>
+	
+	<!-- findSingerLastId -->
+	<select id="findSingerLastId" resultType="Integer">
+		SELECT singerId FROM tb_singer   ORDER BY  singerId  DESC  LIMIT 1
+	</select>
+</mapper>

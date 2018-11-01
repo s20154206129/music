@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.first.lovemusic.dao.CommentDao">
+
+	<resultMap type="Comment" id="commentBasicResult">
+		<id property="commentId" column="commentId" />
+		<result property="commentTime" column="commentTime" />
+		<result property="commentContent" column="commentContent" />
+
+		<!-- 评论的用户 -->
+		<association property="commentUser" column="userId"
+			select="com.first.lovemusic.dao.UserDao.findUserById">
+		</association>
+		<!-- 一个父评论对应许多子评论 -->
+		<collection property="childrenComment" ofType="Comment"
+			column="commentId" select="findChildrenCommentsById">
+		</collection>
+	</resultMap>
+
+	<!-- 评论对象有 多种 有 Music SongSheet对象 Album对象 -->
+	<resultMap type="Comment" id="commentMusicResult" extends="commentBasicResult">
+		<!-- 评论的对象为Music   有些不需要展示那么多信息-->
+		<association property="commentObject" column="commentObjectId"
+			select="com.first.lovemusic.dao.MusicDao.findMusicByObjectId">
+		</association>
+	</resultMap>
+
+	<resultMap type="Comment" id="commentSongSheetResult" extends="commentBasicResult">
+		<!-- 评论的对象为SongSheet   歌单 也在musicDaoMapper中-->
+		<association property="commentObject" column="commentObjectId"
+			select="com.first.lovemusic.dao.MusicDao.findSongSheetByObjectid">
+		</association>
+	</resultMap>
+	
+	<resultMap type="Comment" id="commentAlbumResult" extends="commentBasicResult">
+		<!-- 评论的对象为Album -->
+		<association property="commentObject" column="commentObjectId"
+			select="com.first.lovemusic.dao.AlbumDao.findAlbumByObjectId">
+		</association>
+	</resultMap>
+
+
+
+
+
+	<!-- findChildrenCommentsById 获得所有子评论 -->
+	<select id="findChildrenCommentsById" resultMap="commentBasicResult">
+		select * from   tb_comment   where parentId=#{commentId}   ORDER BY  commentId
+	</select>
+	
+	<!--  findCommentsBySid-->
+	<select id="findCommentsBySid"    resultMap="commentBasicResult"  >
+		 select *  from  tb_comment   where  
+		 commentObjectId=#{sid}   and  parentId IS NULL
+	</select>
+	
+	<!--findCommentsById  找到所有的父评论 -->
+	<select id="findCommentsById"    resultMap="commentBasicResult"  >
+		 select *  from  tb_comment   where  
+		 commentObjectId=#{commentObjectId}   and  parentId IS NULL
+	</select>
+	
+	<!--findCommentsByUserId  -->
+	<select id="findCommentsByUserId"    resultMap="commentBasicResult"  >
+		 select *  from  tb_comment   where  
+		 commentObjectId=#{userId}
+	</select>
+	
+	
+	<!-- findCommentByObjectId   查找歌单评论 -->
+	<select id="findCommentByObjectId"    resultMap="commentBasicResult"  >
+		 select *  from  tb_comment   where  
+		 commentObjectId=#{sid}   and  parentId IS NULL
+	</select>
+	
+	<!--  saveComment  增加歌单评论-->
+	 <insert id="saveComment"   parameterType="Comment"  >
+	    insert into
+		tb_comment(commentContent,commentTime,commentObjectId,userId,parentId)
+		values(#{commentContent},#{commentTime},#{commentObject.sid},#{commentUser.userId},
+		#{parentComment.commentId})
+	 </insert>
+
+
+      <!--findLastId    返回最新插入评论的id-->
+      <select id="findLastId"    resultType="Integer"  >
+		  select  commentId  from  tb_comment   order by  commentId  limit  1
+	  </select>
+	  
+	  
+	  
+</mapper>

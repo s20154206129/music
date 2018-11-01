@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.first.lovemusic.dao.AlbumDao">
+    <!--所有信息  -->
+	<resultMap type="Album" id="albumResult">
+		<id property="albumId" column="albumId" />
+		<result property="albumName" column="albumName" />
+		<result property="company" column="company" />
+		<result property="albumImg" column="albumImg" />
+		<!-- 一张专辑对应  多个歌曲  -->
+		<collection  property="musicList"  ofType="Music" column="albumId"   
+		select="com.first.lovemusic.dao.MusicDao.findAllMusic">
+	    </collection> 
+	</resultMap>
+    
+    
+    <!-- 专辑的基本信息  可以通过extends 属性继承 -->
+    <resultMap type="Album" id="albumBasicResult" >
+		<id property="albumId" column="albumId" />
+		<result property="albumName" column="albumName" />
+		<result property="company" column="company" />
+		<result property="albumImg" column="albumImg" />
+	</resultMap>
+     
+     
+	<select id="findAlbumById"  resultMap="albumResult">
+          SELECT    *  FROM   tb_album    WHERE   albumId=#{albumId}  
+	</select>
+	
+	
+	<!--findAlbumByObjectId  -->
+	<select id="findAlbumByObjectId"  resultMap="albumResult">
+          SELECT    *  FROM   tb_album    WHERE   albumId=#{commentObjectId}  
+	</select>
+	
+	<!--saveAlbum  -->
+	<insert id="saveAlbum">
+		insert into	tb_album(albumName) values(#{albumName})
+	</insert>
+	
+	
+	<!--  findAlbumByName-->
+	<select id="findAlbumByName"  resultMap="albumResult">
+          SELECT    *  FROM   tb_album    WHERE   albumName=#{albumName}  
+	</select>
+	
+	
+	<!--saveAlbumLastId  -->
+	<select id="saveAlbumLastId" resultType="Integer">
+		SELECT albumId FROM tb_album   ORDER BY  albumId  DESC  LIMIT 1
+	</select>
+	
+	
+	<!-- findAlbumsBySingerId -->
+	<select id="findAlbumsBySingerId"  resultMap="albumBasicResult">
+		SELECT * FROM tb_album  WHERE   singerId=#{singerId}  
+	</select>
+</mapper>

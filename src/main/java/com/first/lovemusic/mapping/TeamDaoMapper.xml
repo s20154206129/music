@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.first.lovemusic.dao.TeamDao">
+     <resultMap type="Team" id="teamBasicResult">
+		<id property="teamId" column="teamId" />
+		<result property="teamName" column="teamName" />
+		<result property="teamNum" column="teamNum" />
+		<result property="esblishTime" column="esblishTime" />
+		<result property="company" column="company" />
+	</resultMap>
+    <!-- findTeamById  -->
+    <select id="findTeamById" resultMap="teamBasicResult">
+          SELECT * FROM tb_team WHERE    teamId=#{teamId}
+	</select>
+      
+      
+</mapper>

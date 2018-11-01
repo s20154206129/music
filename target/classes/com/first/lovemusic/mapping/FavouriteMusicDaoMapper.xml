@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.first.lovemusic.dao.FavouriteMusicDao">
+     <!-- 对象返回数据 -->
+	<resultMap type="FavouriteMusic" id="favouriteMusicResult">
+		<id property="fid" column="fid" />
+
+		<association property="user" column="userId"
+			select="com.first.lovemusic.dao.UserDao.findAccountById">
+		</association>
+		<!-- 一个用户喜欢 多个歌曲 -->
+		<association property="music" column="musicId"
+			select="com.first.lovemusic.dao.MusicDao.findMusicById">
+		</association>
+	</resultMap>
+
+
+	<!-- 查找 用户喜欢的歌曲 findFavouriteMusicsByUserId -->
+	<select id="findFavouriteMusicsByUserId" resultMap="favouriteMusicResult">
+		SELECT * FROM
+		tb_favourite WHERE userId=#{userId}
+	</select>
+	
+	<!-- 增加喜欢的歌曲 saveFavouriteMusics -->
+	<insert id="saveFavouriteMusics">
+		insert into
+		tb_favourite(userId,musicId)
+		values(#{userId},#{musicId})
+	</insert>
+
+	<!-- findFavouriteMusicByUserIdAndMusicId -->
+	<select id="findFavouriteMusicByUserIdAndMusicId" resultMap="favouriteMusicResult">
+		SELECT * FROM tb_favourite WHERE userId=#{userId} AND
+		musicId=#{musicId}
+	</select>
+
+	<!-- deleteFavouriteMusicByUserIdAndMusicId -->
+	<delete id="deleteFavouriteMusicByUserIdAndMusicId">
+		DELETE FROM tb_favourite WHERE userId=#{userId} and musicId=#{musicId}
+	</delete>
+</mapper>

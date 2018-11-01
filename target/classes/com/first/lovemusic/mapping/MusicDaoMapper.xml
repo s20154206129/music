@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.first.lovemusic.dao.MusicDao">
+
+	<resultMap type="Music" id="musicResult">
+		<id property="musicId" column="musicId" />
+		<result property="musicName" column="musicName" />
+		<result property="musicSource" column="musicSource" />
+		<result property="musicType" column="musicType" />
+		<result property="isGroupSing" column="isGroupSing" />
+		<result property="sid" column="sid" />
+		<!-- clickNum -->
+		<result property="clickNum" column="clickNum" />
+		<result property="uploadTime" column="uploadTime" javaType="String"
+			jdbcType="TIMESTAMP" />
+		<result property="score" column="score" />
+		<result property="musicImg" column="musicImg" />
+		<!--多对一 专辑 -->
+		<association property="album" column="albumId"
+			select="com.first.lovemusic.dao.AlbumDao.findAlbumById">
+		</association>
+
+		<!--歌手 -->
+		<association property="singer" javaType="Singer" column="singerId"
+			select="com.first.lovemusic.dao.SingerDao.findSingerById">
+		</association>
+
+		<!--属于哪个的歌单 -->
+		<association property="songSheet" column="sid"
+			select="findSongSheetBySid">
+		</association>
+
+
+		<!--组合歌唱 -->
+		<association property="team" javaType="Team" column="teamId"
+			select="com.first.lovemusic.dao.TeamDao.findTeamById">
+		</association>
+	</resultMap>
+
+	<!-- music 本身的基础信息 -->
+	<resultMap type="Music" id="musicBasicResult">
+		<id property="musicId" column="musicId" />
+		<result property="musicName" column="musicName" />
+		<result property="musicSource" column="musicSource" />
+		<result property="musicType" column="musicType" />
+		<result property="isGroupSing" column="isGroupSing" />
+		<result property="clickNum" column="clickNum" />
+		<result property="uploadTime" column="uploadTime" javaType="String"
+			jdbcType="TIMESTAMP" />
+		<result property="musicImg" column="musicImg" />
+		<result property="score" column="score" />
+	</resultMap>
+
+
+
+	<!-- findAllMusic 找到专辑中所有歌曲 一对多 多个那方 添加单的外键 -->
+	<select id="findAllMusic" resultMap="musicBasicResult">
+		SELECT * FROM tb_music WHERE
+		albumId=#{albumId}
+	</select>
+	
+	<!-- findMusicById 根据歌曲id -->
+	<select id="findMusicById" resultMap="musicResult">
+		SELECT * FROM tb_music
+		WHERE musicId=#{musicId}
+	</select>
+
+	<!-- 评论musicid查找 music -->
+	<select id="findMusicByObjectId" resultMap="musicBasicResult">
+		SELECT * FROM
+		tb_music WHERE musicId=#{commentObjectId}
+	</select>
+	<!-- findMusicsBySId 根据歌单的id 查找歌单的所有数据 -->
+	<select id="findMusicsBySId" resultMap="musicResult">
+		SELECT * FROM tb_music
+		WHERE sid=#{sid}
+	</select>
+
+
+	<!-- findMusicsByClickNum -->
+	<select id="findMusicsByClickNum" resultMap="musicResult">
+		SELECT * FROM
+		tb_music ORDER BY clickNum DESC limit 8
+	</select>
+
+	<!--findAllMusicsByClickNum   所有歌曲-->
+	<select id="findAllMusicsByClickNum" resultMap="musicResult">
+		SELECT * FROM
+		tb_music ORDER BY clickNum DESC 
+	</select>
+
+
+
+	<!--findMusicsByTime 新歌榜  一部分 -->
+	<select id="findMusicsByTime" resultMap="musicResult">
+		SELECT * FROM tb_music
+		ORDER BY uploadTime DESC limit 8
+	</select>
+	
+	
+	<!-- findAllMusicsByTime -->
+    <select id="findAllMusicsByTime" resultMap="musicResult">
+		SELECT * FROM tb_music
+		ORDER BY uploadTime DESC 
+	</select>
+	
+	
+	<!--findMusicsByScore  一部分-->
+	<select id="findMusicsByScore" resultMap="musicResult">
+		SELECT * FROM tb_music
+		ORDER BY score DESC limit 8
+	</select>
+	
+	<!--findAllMusicsByScore  -->
+	<select id="findAllMusicsByScore" resultMap="musicResult">
+		SELECT * FROM tb_music
+		ORDER BY score DESC
+	</select>
+
+	<!-- findMusicByMusicName -->
+	<select id="findMusicByMusicName" resultMap="musicResult">
+		SELECT * FROM
+		tb_music where musicName=#{musicName}
+	</select>
+
+	<!-- updateMusicClickNum -->
+	<update id="updateMusicClickNum">
+		UPDATE tb_music SET clickNum=clickNum+1 WHERE musicId=#{musicId};
+	</update>
+
+
+	<!-- deleteMusicById -->
+	<delete id="deleteMusicById">
+		DELETE FROM tb_music WHERE musicId=#{musicId};
+	</delete>
+
+     <!-- findMusicsBySingerId -->
+     <select id="findMusicsBySingerId" resultMap="musicResult">
+		SELECT * FROM
+		tb_music where singerId=#{singerId}
+	</select>
+
+
+
+
+	<!-- 歌单的resultMap -->
+	<resultMap type="SongSheet" id="songSheetResult">
+		<id property="sid" column="sid" />
+		<result property="title" column="title" />
+		<result property="introduce" column="introduce" />
+		<result property="tag" column="tag" />
+		<result property="number" column="number" />
+		<result property="img" column="img" />
+	</resultMap>
+
+
+	<!-- findSongSheetList findSongSheetList -->
+	<select id="findSongSheetList" resultMap="songSheetResult">
+		SELECT * from
+		tb_songsheet ORDER BY number LIMIT 8
+	</select>
+
+
+
+	<!-- findSongSheetBySid -->
+	<select id="findSongSheetBySid" resultMap="songSheetResult">
+		SELECT * from
+		tb_songsheet WHERE sid=#{sid}
+	</select>
+	
+	<!-- findSongSheetByObjectid -->
+	<select id="findSongSheetByObjectid" resultMap="songSheetResult">
+		SELECT * from
+		tb_songsheet WHERE sid=#{commentObjectId}
+	</select>
+
+
+	<!--查询 findSearcherInfo   #{keyWord} -->
+	<select id="findSearcherInfo" resultMap="musicResult">
+		SELECT DISTINCT * from
+		tb_songsheet ss,tb_music m,tb_singer s
+		WHERE (m.sid=ss.sid  	AND   m.singerId=s.singerId)
+	AND (ss.title like  #{keyWord}   OR   s.singerName like  #{keyWord}    OR    m.musicName like   #{keyWord})
+	</select>
+
+	<!-- findSongSheetCount -->
+	<select id="findSongSheetCount" resultType="Integer">
+		SELECT count(*) from
+		tb_songsheet
+	</select>
+
+
+	<!--findPageSongSheetsList -->
+	<select id="findPageSongSheetsList" resultMap="songSheetResult">
+		SELECT * from
+		tb_songsheet ORDER BY sid LIMIT #{currentPage},#{pageSize}
+	</select>
+
+	<!-- saveMusic -->
+	<insert id="saveMusic" parameterType="Music">
+		insert into
+		tb_music(musicName,musicType,singerId,albumId,musicSource,musicImg,lyrics,sid,clickNum,score,uploadTime)
+		values(#{musicName},#{musicType},#{singer.singerId},#{album.albumId},
+		#{musicSource},#{musicImg},#{lyrics},#{sid},0,0,#{uploadTime})
+	</insert>
+
+	<!-- findSongSheetSidByTag -->
+	<select id="findSongSheetSidByTag" resultType="Integer">
+		SELECT * from
+		tb_songsheet where tag like #{musicType};
+	</select>
+	<!-- saveSongSheet -->
+	<insert id="saveSongSheet" parameterType="SongSheet">
+		insert into
+		tb_songsheet(title,introduce,tag,img,number)
+		values(#{title},#{introduce},#{tag},#{img},#{number})
+	</insert>
+</mapper>

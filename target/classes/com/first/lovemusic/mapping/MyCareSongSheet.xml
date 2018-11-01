@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.first.lovemusic.dao.MyCareSongSheetDao">
+  
+      <resultMap type="MyCareSongSheet" id="myCareSongSheetResult">
+		<id property="id" column="id" />
+		<association property="user" column="userId"
+			select="com.first.lovemusic.dao.UserDao.findAccountById">
+		</association>
+		<!-- 用户收藏的歌单 -->
+		<collection property="songSheetList" ofType="SongSheet" column="sid"
+			select="com.first.lovemusic.dao.MusicDao.findSongSheetBySid">
+		</collection>
+	</resultMap>
+
+     <!-- findSongSheetByUserIdAndSid -->
+     <select id="findSongSheetByUserIdAndSid" resultMap="myCareSongSheetResult">
+		SELECT  * from tb_mycaresongsheet  WHERE   userId=#{userId}  and  sid=#{sid}
+	 </select>
+	 
+     <!-- saveSongSheetToMyCareList -->
+     <insert id="saveSongSheetToMyCareList"  >
+		  INSERT INTO  tb_mycaresongsheet(userId,sid)   VALUES(#{userId},#{sid})
+	</insert>
+     
+     
+     <!-- deleteSongSheetFromMyCareSongSheet -->
+     <delete id="deleteSongSheetFromMyCareSongSheet">
+       DELETE  from  tb_mycaresongsheet  WHERE   sid=#{sid}   and  userId=#{userId}
+     </delete>
+</mapper>
